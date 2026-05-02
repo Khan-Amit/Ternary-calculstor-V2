@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Ternary Calculator • Simple Mobile</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: #0b1120;
+            font-family: system-ui, -apple-system, 'Segoe UI', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 16px;
+        }
+        .card {
+            max-width: 500px;
+            width: 100%;
+            background: #111827;
+            border-radius: 48px;
+            padding: 24px 20px 32px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            border: 1px solid #2d3a5e;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin: 0 0 4px 0;
+            font-weight: 600;
+            text-align: center;
+            background: linear-gradient(135deg, #fff, #7aa2f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .sub {
+            text-align: center;
+            color: #7e8cae;
+            font-size: 0.75rem;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #1f2a44;
+            padding-bottom: 12px;
+        }
+        .presets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+        .preset-btn {
+            background: #1e2a3e;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #cbd5f0;
+            cursor: pointer;
+            transition: 0.1s;
+            font-family: monospace;
+        }
+        .preset-btn.active {
+            background: #3b6ea0;
+            color: white;
+            box-shadow: 0 0 6px #3b6ea0;
+        }
+        .slider-container {
+            margin: 20px 0;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #ccddf8;
+            margin-bottom: 8px;
+        }
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #2ecc71 0%, #f1c40f 50%, #e67e22 100%);
+            border-radius: 20px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 6px cyan;
+            border: 2px solid #111;
+        }
+        .threshold-panel {
+            background: #0a0f1a;
+            border-radius: 28px;
+            padding: 16px;
+            margin: 20px 0;
+        }
+        .threshold-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .threshold-row label {
+            font-size: 0.8rem;
+            background: #00000066;
+            padding: 6px 12px;
+            border-radius: 40px;
+            width: 100px;
+        }
+        .threshold-row input {
+            flex: 1;
+            background: #010a1a;
+            border: 1px solid #2f4172;
+            color: #ffdd99;
+            border-radius: 40px;
+            padding: 8px 12px;
+            font-size: 1rem;
+            text-align: center;
+            font-family: monospace;
+        }
+        .result {
+            background: #00000055;
+            border-radius: 40px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 16px;
+        }
+        .ternary {
+            font-size: 4rem;
+            font-weight: bold;
+            letter-spacing: 8px;
+        }
+        .state0 { color: #2ecc71; text-shadow: 0 0 4px #2ecc71; }
+        .stateT { color: #f1c40f; text-shadow: 0 0 4px #f1c40f; }
+        .state1 { color: #e67e22; text-shadow: 0 0 4px #e67e22; }
+        .value-badge {
+            font-size: 1.3rem;
+            margin-top: 8px;
+            color: #bbccff;
+        }
+        .width-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: #88aaff;
+            background: #00000033;
+            border-radius: 40px;
+            padding: 6px;
+        }
+        .footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #4b5a7c;
+        }
+        button:active { transform: scale(0.97); }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>⚛️ TERNARY CALCULATOR</h1>
+    <div class="sub">continuous → 0 • T • 1</div>
+
+    <div class="presets" id="presetContainer">
+        <button class="preset-btn" data-thl="25" data-thh="75">🧠 EMOTION</button>
+        <button class="preset-btn" data-thl="20" data-thh="60">📈 ECONOMICS</button>
+        <button class="preset-btn" data-thl="30" data-thh="70">⚔️ CONFLICT</button>
+        <button class="preset-btn" data-thl="10" data-thh="35">✈️ FLIGHT</button>
+        <button class="preset-btn" data-thl="40" data-thh="85">🤖 AI</button>
+    </div>
+
+    <div class="slider-container">
+        <div class="slider-label">
+            <span>◀ 0 (LOW)</span>
+            <span id="currentValue">50.0</span>
+            <span>1 (HIGH) ▶</span>
+        </div>
+        <input type="range" id="mainSlider" min="0" max="100" step="0.5" value="50">
+    </div>
+
+    <div class="threshold-panel">
+        <div class="threshold-row">
+            <label>⬅ 0 → T threshold</label>
+            <input type="number" id="thLow" step="0.5" min="0" max="100" value="30">
+        </div>
+        <div class="threshold-row">
+            <label>T → 1 threshold ➔</label>
+            <input type="number" id="thHigh" step="0.5" min="0" max="100" value="70">
+        </div>
+    </div>
+
+    <div class="result">
+        <div class="ternary" id="ternaryDisplay">T</div>
+        <div class="value-badge">continuous: <span id="contValue">0.500</span></div>
+        <div class="width-info" id="widthInfo">T‑zone width: 40.0</div>
+    </div>
+    <div class="footer">
+        tap presets • adjust thresholds • slider = real continuous input
+    </div>
+</div>
+
+<script>
+    // DOM elements
+    const slider = document.getElementById('mainSlider');
+    const thLow = document.getElementById('thLow');
+    const thHigh = document.getElementById('thHigh');
+    const ternaryDisplay = document.getElementById('ternaryDisplay');
+    const contValueSpan = document.getElementById('contValue');
+    const currentValueSpan = document.getElementById('currentValue');
+    const widthInfo = document.getElementById('widthInfo');
+
+    // helper: update everything
+    function update() {
+        let val = parseFloat(slider.value);
+        let low = parseFloat(thLow.value);
+        let high = parseFloat(thHigh.value);
+        if (isNaN(low)) low = 0;
+        if (isNaN(high)) high = 100;
+        if (low < 0) low = 0;
+        if (high > 100) high = 100;
+        if (low > high) { // swap if inverted
+            [low, high] = [high, low];
+            thLow.value = low;
+            thHigh.value = high;
+        }
+        // update width display
+        let width = (high - low).toFixed(1);
+        widthInfo.innerText = `T‑zone width: ${width} (from ${low} to ${high})`;
+
+        // ternary decision
+        let state = '';
+        let stateClass = '';
+        let desc = '';
+        if (val <= low) {
+            state = '0';
+            stateClass = 'state0';
+            desc = 'LOW';
+        } else if (val >= high) {
+            state = '1';
+            stateClass = 'state1';
+            desc = 'HIGH';
+        } else {
+            state = 'T';
+            stateClass = 'stateT';
+            desc = 'TRANSITION';
+        }
+        ternaryDisplay.innerText = state;
+        ternaryDisplay.className = `ternary ${stateClass}`;
+        // value displays
+        currentValueSpan.innerText = val.toFixed(1);
+        let continuous = (val / 100).toFixed(3);
+        contValueSpan.innerText = continuous;
+        // optional: background hint for slider? no need.
+    }
+
+    // event listeners
+    slider.addEventListener('input', update);
+    thLow.addEventListener('input', update);
+    thHigh.addEventListener('input', update);
+
+    // preset buttons – set thresholds and optionally update slider?
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    presetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            let newLow = parseFloat(btn.getAttribute('data-thl'));
+            let newHigh = parseFloat(btn.getAttribute('data-thh'));
+            if (!isNaN(newLow)) thLow.value = newLow;
+            if (!isNaN(newHigh)) thHigh.value = newHigh;
+            update();
+            // optional: change active style
+            presetBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // initial active preset = emotion (25/75)
+    document.querySelector('.preset-btn[data-thl="25"]').classList.add('active');
+    update();
+</script>
+</body>
+</html>
